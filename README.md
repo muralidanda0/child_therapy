@@ -82,18 +82,4 @@ Visit **http://localhost:3000**
 | POST   | `/sessions/:id/notes`      | Save session note        |
 | PUT    | `/therapist/availability`  | Update availability      |
 
-## Design System
 
-| Token    | Value     |
-|----------|-----------|
-| Primary  | `#4ECDC4` |
-| Accent   | `#FF6B6B` |
-| Background | `#FAFAF8` |
-| Text     | `#2C2C2A` |
-| Success  | `#A8E6CF` |
-
-Fonts: **Nunito** (headings), **Inter** (body)
-
-## License
-
-MIT
