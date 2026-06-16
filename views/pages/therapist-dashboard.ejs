@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | Little Hearts Therapy</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <div class="dashboard">
+    <aside class="sidebar" aria-label="Therapist portal navigation">
+      <div class="sidebar__profile">
+        <div class="sidebar__avatar" aria-hidden="true"><%= user.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() %></div>
+        <div>
+          <div class="sidebar__name"><%= user.name %></div>
+          <div class="sidebar__role"><%= therapist.title %></div>
+        </div>
+      </div>
+      <nav>
+        <ul class="sidebar__nav">
+          <li><a href="/therapist/dashboard?section=schedule" class="<%= section === 'schedule' ? 'active' : '' %>">📋 Today's sessions</a></li>
+          <li><a href="/therapist/dashboard?section=clients" class="<%= section === 'clients' ? 'active' : '' %>">👥 All clients</a></li>
+          <li><a href="/therapist/dashboard?section=notes" class="<%= section === 'notes' ? 'active' : '' %>">📝 Session notes</a></li>
+          <li><a href="/therapist/dashboard?section=availability" class="<%= section === 'availability' ? 'active' : '' %>">📅 Availability</a></li>
+          <li><a href="/therapist/dashboard?section=messages" class="<%= section === 'messages' ? 'active' : '' %>">💬 Messages<% if (unreadMessages > 0) { %> (<%= unreadMessages %>)<% } %></a></li>
+          <li><a href="/therapist/dashboard?section=settings" class="<%= section === 'settings' ? 'active' : '' %>">⚙️ Settings</a></li>
+          <li><a href="/auth/logout">🚪 Logout</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="dashboard__main">
+      <%- include('../partials/flash') %>
+
+      <!-- Today's Schedule -->
+      <div class="dashboard-section <%= section === 'schedule' ? 'active' : '' %>" id="section-schedule">
+        <h1 style="font-size:28px;margin-bottom:8px;">Today's schedule</h1>
+        <p style="color:var(--color-text-muted);margin-bottom:32px;"><%= new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' }) %></p>
+
+        <% if (todaySessions.length) { %>
+          <div class="schedule-timeline">
+            <% todaySessions.forEach(function(session) { %>
+              <div class="schedule-block">
+                <div class="schedule-block__time"><%= new Date(session.dateTime).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) %></div>
+                <div class="schedule-block__child"><%= session.childName %></div>
+                <div class="schedule-block__meta">
+                  <%= session.type || session.concern %> · 45 min ·
+                  <span class="status status--<%= session.status %>"><%= session.status %></span>
+                </div>
+                <a href="/therapist/dashboard?section=notes&appointment=<%= session._id %>" class="btn btn-teal btn-sm" style="margin-top:12px;">Start session</a>
+              </div>
+            <% }); %>
+          </div>
+        <% } else { %>
+          <div class="card" style="text-align:center;padding:48px;">
+            <p style="font-size:48px;margin-bottom:16px;" aria-hidden="true">☀️</p>
+            <p style="color:var(--color-text-muted);">No sessions scheduled for today. Enjoy your day!</p>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Client List -->
+      <div class="dashboard-section <%= section === 'clients' ? 'active' : '' %>" id="section-clients">
+        <h1 style="font-size:28px;margin-bottom:24px;">All clients</h1>
+
+        <div class="form-group" style="max-width:320px;margin-bottom:20px;">
+          <label for="client-search">Search clients</label>
+          <input type="search" id="client-search" class="form-control" placeholder="Search by name or concern..." aria-label="Search clients">
+        </div>
+
+        <div class="table-wrap">
+          <table aria-label="Client list" id="clients-table">
+            <thead>
+              <tr>
+                <th>Child name</th><th>Age</th><th>Primary concern</th><th>Sessions</th><th>Last session</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% 
+                const clientMap = {};
+                allSessions.forEach(function(s) {
+                  const key = s.childName;
+                  if (!clientMap[key]) {
+                    clientMap[key] = { name: key, sessions: [], concern: s.concern, dob: s.childDOB };
+                  }
+                  clientMap[key].sessions.push(s);
+                });
+                Object.values(clientMap).forEach(function(client) {
+                  client.sessions.sort((a,b) => new Date(b.dateTime) - new Date(a.dateTime));
+              %>
+                <tr data-search="<%= client.name.toLowerCase() %> <%= client.concern.toLowerCase() %>">
+                  <td><%= client.name %></td>
+                  <td><%= client.dob ? Math.floor((Date.now() - new Date(client.dob)) / (365.25*24*60*60*1000)) + ' yrs' : '—' %></td>
+                  <td><%= client.concern %></td>
+                  <td><%= client.sessions.length %></td>
+                  <td><%= client.sessions[0] ? new Date(client.sessions[0].dateTime).toLocaleDateString() : '—' %></td>
+                  <td><span class="status status--<%= client.sessions[0] ? client.sessions[0].status : 'pending' %>"><%= client.sessions[0] ? client.sessions[0].status : 'new' %></span></td>
+                </tr>
+              <% }); %>
+              <% if (!Object.keys(clientMap).length) { %>
+                <tr><td colspan="6" style="text-align:center;color:var(--color-text-muted);padding:24px;">No clients yet.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Session Notes -->
+      <div class="dashboard-section <%= section === 'notes' ? 'active' : '' %>" id="section-notes">
+        <h1 style="font-size:28px;margin-bottom:24px;">Session notes</h1>
+
+        <% 
+          const activeAppt = activeAppointmentId 
+            ? allSessions.find(s => s._id.toString() === activeAppointmentId) 
+            : todaySessions[0];
+        %>
+
+        <% if (activeAppt) { %>
+          <div class="card" style="max-width:700px;">
+            <h2 style="font-size:20px;margin-bottom:20px;">Log session: <%= activeAppt.childName %></h2>
+            <form action="/sessions/<%= activeAppt._id %>/notes" method="POST" aria-label="Session notes form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Child name</label>
+                  <input type="text" class="form-control" value="<%= activeAppt.childName %>" readonly>
+                </div>
+                <div class="form-group">
+                  <label>Session date</label>
+                  <input type="text" class="form-control" value="<%= new Date(activeAppt.dateTime).toLocaleString() %>" readonly>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="duration">Duration (minutes)</label>
+                <input type="number" id="duration" name="duration" class="form-control" value="45" min="15" max="120">
+              </div>
+
+              <div class="form-group">
+                <label>Goals worked on</label>
+                <div class="goal-chips">
+                  <% ['Communication','Behavior','Motor skills','Social skills','Emotional regulation','Sensory processing','Academic readiness'].forEach(function(goal) { %>
+                    <div class="goal-chip">
+                      <input type="checkbox" name="goals" id="goal-<%= goal.replace(/\s/g,'') %>" value="<%= goal %>">
+                      <label for="goal-<%= goal.replace(/\s/g,'') %>"><%= goal %></label>
+                    </div>
+                  <% }); %>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="observations">Therapist observations</label>
+                <textarea id="observations" name="observations" class="form-control" placeholder="Document session progress, behaviors, and breakthroughs..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="nextPlan">Plan for next session</label>
+                <textarea id="nextPlan" name="nextPlan" class="form-control" placeholder="Goals and activities for the next session..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-check">
+                  <input type="checkbox" name="sharedWithParent" id="share-parent">
+                  Share with parent
+                </label>
+              </div>
+
+              <div style="display:flex;gap:12px;">
+                <button type="submit" name="action" value="draft" class="btn btn-outline">Save as draft</button>
+                <button type="submit" name="action" value="finalize" class="btn btn-teal">Finalize note</button>
+              </div>
+            </form>
+          </div>
+        <% } else { %>
+          <p style="color:var(--color-text-muted);">Select a session from today's schedule to log notes.</p>
+        <% } %>
+      </div>
+
+      <!-- Availability -->
+      <div class="dashboard-section <%= section === 'availability' ? 'active' : '' %>" id="section-availability">
+        <h1 style="font-size:28px;margin-bottom:8px;">Availability manager</h1>
+        <p style="color:var(--color-text-muted);margin-bottom:24px;">Click cells to toggle available (green) or blocked (red). Mon–Sat, 8am–6pm.</p>
+
+        <form action="/therapist/availability?_method=PUT" method="POST" aria-label="Availability form">
+          <div class="availability-grid">
+            <table class="availability-table" aria-label="Weekly availability grid">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <% ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'].forEach(function(day) { %>
+                    <th><%= day.substring(0,3) %></th>
+                  <% }); %>
+                </tr>
+              </thead>
+              <tbody>
+                <% for (let h = 8; h <= 17; h++) { %>
+                  <tr>
+                    <th><%= h > 12 ? (h-12)+'pm' : h+'am' %></th>
+                    <% ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'].forEach(function(day) { %>
+                      <% 
+                        const key = day;
+                        const hourStr = h + ':00';
+                        const daySlots = availability[key] || [];
+                        const isAvail = daySlots.includes(hourStr);
+                      %>
+                      <td>
+                        <label class="avail-cell <%= isAvail ? 'available' : '' %>" title="<%= day %> <%= hourStr %>">
+                          <input type="checkbox" name="slots[<%= day %>][]" value="<%= hourStr %>" <%= isAvail ? 'checked' : '' %>>
+                        </label>
+                      </td>
+                    <% }); %>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+          <button type="submit" class="btn btn-teal" style="margin-top:20px;">Save availability</button>
+        </form>
+      </div>
+
+      <!-- Messages -->
+      <div class="dashboard-section <%= section === 'messages' ? 'active' : '' %>" id="section-messages">
+        <h1 style="font-size:28px;margin-bottom:24px;">Messages</h1>
+
+        <div class="message-list">
+          <% if (messages.length) { %>
+            <% messages.forEach(function(msg) { %>
+              <div class="message-item <%= !msg.read && msg.toId._id.toString() === user._id.toString() ? 'message-item--unread' : '' %>">
+                <div class="message-item__header">
+                  <span class="message-item__from"><%= msg.fromId.name %> (<%= msg.fromId.role %>)</span>
+                  <span class="message-item__date"><%= new Date(msg.createdAt).toLocaleDateString() %></span>
+                </div>
+                <p><%= msg.body %></p>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <p style="color:var(--color-text-muted);">No messages yet.</p>
+          <% } %>
+        </div>
+
+        <div class="card">
+          <h2 style="font-size:18px;margin-bottom:16px;">Reply</h2>
+          <form action="/therapist/messages/send" method="POST" aria-label="Send message form">
+            <div class="form-group">
+              <label for="therapist-msg-to">To (parent user ID)</label>
+              <input type="text" id="therapist-msg-to" name="toId" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="therapist-msg-body">Message</label>
+              <textarea id="therapist-msg-body" name="body" class="form-control" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-teal">Send</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="dashboard-section <%= section === 'settings' ? 'active' : '' %>" id="section-settings">
+        <h1 style="font-size:28px;margin-bottom:24px;">Settings</h1>
+
+        <div class="card" style="max-width:600px;">
+          <form action="/therapist/settings" method="POST" aria-label="Therapist settings">
+            <div class="form-group">
+              <label for="therapist-name">Full name</label>
+              <input type="text" id="therapist-name" name="name" class="form-control" value="<%= user.name %>">
+            </div>
+            <div class="form-group">
+              <label for="therapist-bio">Bio</label>
+              <textarea id="therapist-bio" name="bio" class="form-control"><%= therapist.bio || '' %></textarea>
+            </div>
+
+            <h2 style="font-size:18px;margin:24px 0 16px;">Change password</h2>
+            <div class="form-group">
+              <label for="therapist-current-pw">Current password</label>
+              <input type="password" id="therapist-current-pw" name="currentPassword" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="therapist-new-pw">New password</label>
+              <input type="password" id="therapist-new-pw" name="newPassword" class="form-control">
+            </div>
+
+            <button type="submit" class="btn btn-teal">Save changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/therapist-dashboard.js"></script>
+</body>
+</html>

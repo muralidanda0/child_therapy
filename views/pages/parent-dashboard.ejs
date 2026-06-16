@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | Little Hearts Therapy</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <div class="dashboard">
+    <aside class="sidebar" aria-label="Parent portal navigation">
+      <div class="sidebar__profile">
+        <div class="sidebar__avatar" aria-hidden="true"><%= user.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() %></div>
+        <div>
+          <div class="sidebar__name"><%= user.name %></div>
+          <div class="sidebar__role">Parent</div>
+        </div>
+      </div>
+      <nav>
+        <ul class="sidebar__nav">
+          <li><a href="/parent/dashboard?section=home" class="<%= section === 'home' ? 'active' : '' %>" aria-current="<%= section === 'home' ? 'page' : 'false' %>">🏠 Dashboard</a></li>
+          <li><a href="/parent/dashboard?section=appointments" class="<%= section === 'appointments' ? 'active' : '' %>">📅 My appointments</a></li>
+          <li><a href="/parent/dashboard?section=children" class="<%= section === 'children' ? 'active' : '' %>">👶 My children</a></li>
+          <li><a href="/parent/dashboard?section=messages" class="<%= section === 'messages' ? 'active' : '' %>">💬 Messages<% if (stats.unread > 0) { %> (<%= stats.unread %>)<% } %></a></li>
+          <li><a href="/parent/dashboard?section=settings" class="<%= section === 'settings' ? 'active' : '' %>">⚙️ Settings</a></li>
+          <li><a href="/auth/logout">🚪 Logout</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="dashboard__main">
+      <%- include('../partials/flash') %>
+
+      <!-- Home Section -->
+      <div class="dashboard-section <%= section === 'home' ? 'active' : '' %>" id="section-home">
+        <div class="dashboard__welcome">
+          <h1>Welcome back, <%= user.name.split(' ')[0] %> 👋</h1>
+          <p>Here's an overview of your family's therapy journey.</p>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-card__value"><%= stats.upcoming %></div>
+            <div class="stat-card__label">Upcoming sessions</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__value"><%= stats.completed %></div>
+            <div class="stat-card__label">Completed sessions</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__value"><%= stats.children %></div>
+            <div class="stat-card__label">Children enrolled</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__value"><%= stats.unread %></div>
+            <div class="stat-card__label">Unread messages</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-wrap__header">
+            <h2>Upcoming appointments</h2>
+            <a href="/appointments/new" class="btn btn-primary btn-sm">Book new</a>
+          </div>
+          <% if (upcoming.length) { %>
+            <table aria-label="Upcoming appointments">
+              <thead>
+                <tr>
+                  <th>Date</th><th>Time</th><th>Child</th><th>Therapist</th><th>Service</th><th>Status</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% upcoming.forEach(function(appt) { %>
+                  <tr>
+                    <td><%= new Date(appt.dateTime).toLocaleDateString() %></td>
+                    <td><%= new Date(appt.dateTime).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) %></td>
+                    <td><%= appt.childName %></td>
+                    <td><%= appt.therapistId && appt.therapistId.userId ? appt.therapistId.userId.name : '—' %></td>
+                    <td><%= appt.type || appt.concern %></td>
+                    <td><span class="status status--<%= appt.status %>"><%= appt.status %></span></td>
+                    <td>
+                      <div class="table-actions">
+                        <a href="/parent/dashboard?section=appointments" class="btn btn-outline-teal btn-sm">View</a>
+                        <form action="/appointments/<%= appt._id %>/cancel" method="POST" style="display:inline;">
+                          <button type="submit" class="btn btn-outline btn-sm" onclick="return confirm('Cancel this appointment?')">Cancel</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          <% } else { %>
+            <p style="padding:24px;color:var(--color-text-muted);text-align:center;">No upcoming appointments. <a href="/appointments/new">Book one now</a>.</p>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Appointments Section -->
+      <div class="dashboard-section <%= section === 'appointments' ? 'active' : '' %>" id="section-appointments">
+        <h1 style="font-size:28px;margin-bottom:24px;">My appointments</h1>
+
+        <div class="table-wrap">
+          <div class="table-wrap__header"><h2>Upcoming</h2></div>
+          <% if (upcoming.length) { %>
+            <table aria-label="All upcoming appointments">
+              <thead><tr><th>Date</th><th>Time</th><th>Child</th><th>Therapist</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                <% upcoming.forEach(function(appt) { %>
+                  <tr>
+                    <td><%= new Date(appt.dateTime).toLocaleDateString() %></td>
+                    <td><%= new Date(appt.dateTime).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) %></td>
+                    <td><%= appt.childName %></td>
+                    <td><%= appt.therapistId && appt.therapistId.userId ? appt.therapistId.userId.name : '—' %></td>
+                    <td><span class="status status--<%= appt.status %>"><%= appt.status %></span></td>
+                    <td>
+                      <form action="/appointments/<%= appt._id %>/cancel" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-outline btn-sm" onclick="return confirm('Cancel?')">Cancel</button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          <% } else { %>
+            <p style="padding:24px;color:var(--color-text-muted);">No upcoming appointments.</p>
+          <% } %>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-wrap__header"><h2>History</h2></div>
+          <% if (past.length) { %>
+            <table aria-label="Appointment history">
+              <thead><tr><th>Date</th><th>Child</th><th>Service</th><th>Status</th><th>Notes</th></tr></thead>
+              <tbody>
+                <% past.forEach(function(appt) { %>
+                  <% const note = sessionNotes.find(n => n.appointmentId && n.appointmentId._id.toString() === appt._id.toString()); %>
+                  <tr class="expandable-row">
+                    <td><%= new Date(appt.dateTime).toLocaleDateString() %></td>
+                    <td><%= appt.childName %></td>
+                    <td><%= appt.type || appt.concern %></td>
+                    <td><span class="status status--<%= appt.status %>"><%= appt.status %></span></td>
+                    <td>
+                      <% if (note) { %>
+                        <details>
+                          <summary>View session notes</summary>
+                          <div class="note-content">
+                            <strong>Observations:</strong> <%= note.observations %><br>
+                            <strong>Next plan:</strong> <%= note.nextPlan %>
+                          </div>
+                        </details>
+                      <% } else { %>
+                        <span style="color:var(--color-text-muted);font-size:13px;">—</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          <% } else { %>
+            <p style="padding:24px;color:var(--color-text-muted);">No past appointments yet.</p>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Children Section -->
+      <div class="dashboard-section <%= section === 'children' ? 'active' : '' %>" id="section-children">
+        <h1 style="font-size:28px;margin-bottom:24px;">My children</h1>
+
+        <div class="table-wrap" style="margin-bottom:24px;">
+          <% if (children.length) { %>
+            <table aria-label="Registered children">
+              <thead><tr><th>Name</th><th>Date of birth</th><th>Primary concern</th></tr></thead>
+              <tbody>
+                <% children.forEach(function(child) { %>
+                  <tr>
+                    <td><%= child.name %></td>
+                    <td><%= new Date(child.dob).toLocaleDateString() %></td>
+                    <td><%= child.concern %></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          <% } else { %>
+            <p style="padding:24px;color:var(--color-text-muted);">No children added yet.</p>
+          <% } %>
+        </div>
+
+        <div class="card">
+          <h2 style="font-size:20px;margin-bottom:20px;">Add a child</h2>
+          <form action="/parent/children/add" method="POST" aria-label="Add child form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="child-name">Child name *</label>
+                <input type="text" id="child-name" name="name" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="child-dob">Date of birth *</label>
+                <input type="date" id="child-dob" name="dob" class="form-control" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="child-concern">Primary concern *</label>
+              <select id="child-concern" name="concern" class="form-control" required>
+                <option value="">Select</option>
+                <option value="Speech delay">Speech delay</option>
+                <option value="Behavioral challenges">Behavioral challenges</option>
+                <option value="Sensory issues">Sensory issues</option>
+                <option value="Social difficulties">Social difficulties</option>
+                <option value="Anxiety">Anxiety</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-teal">Add child</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Messages Section -->
+      <div class="dashboard-section <%= section === 'messages' ? 'active' : '' %>" id="section-messages">
+        <h1 style="font-size:28px;margin-bottom:24px;">Messages</h1>
+
+        <div class="message-list">
+          <% if (messages.length) { %>
+            <% messages.forEach(function(msg) { %>
+              <div class="message-item <%= !msg.read && msg.toId._id.toString() === user._id.toString() ? 'message-item--unread' : '' %>">
+                <div class="message-item__header">
+                  <span class="message-item__from"><%= msg.fromId.name %></span>
+                  <span class="message-item__date"><%= new Date(msg.createdAt).toLocaleDateString() %></span>
+                </div>
+                <p><%= msg.body %></p>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <p style="color:var(--color-text-muted);">No messages yet.</p>
+          <% } %>
+        </div>
+
+        <div class="card">
+          <h2 style="font-size:18px;margin-bottom:16px;">Send a message</h2>
+          <form action="/parent/messages/send" method="POST" aria-label="Send message form">
+            <div class="form-group">
+              <label for="msg-to">To (therapist user ID)</label>
+              <input type="text" id="msg-to" name="toId" class="form-control" placeholder="Enter recipient user ID" required>
+            </div>
+            <div class="form-group">
+              <label for="msg-body">Message</label>
+              <textarea id="msg-body" name="body" class="form-control" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-teal">Send message</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Settings Section -->
+      <div class="dashboard-section <%= section === 'settings' ? 'active' : '' %>" id="section-settings">
+        <h1 style="font-size:28px;margin-bottom:24px;">Settings</h1>
+
+        <div class="card" style="max-width:600px;">
+          <form action="/parent/settings" method="POST" aria-label="Profile settings">
+            <h2 style="font-size:18px;margin-bottom:20px;">Profile</h2>
+            <div class="form-group">
+              <label for="settings-name">Full name</label>
+              <input type="text" id="settings-name" name="name" class="form-control" value="<%= user.name %>">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="settings-phone">Phone</label>
+                <input type="tel" id="settings-phone" name="phone" class="form-control" value="<%= user.phone || '' %>">
+              </div>
+              <div class="form-group">
+                <label for="settings-emergency">Emergency contact</label>
+                <input type="text" id="settings-emergency" name="emergencyContact" class="form-control" value="<%= user.emergencyContact || '' %>">
+              </div>
+            </div>
+
+            <h2 style="font-size:18px;margin:24px 0 16px;">Notifications</h2>
+            <div class="form-group">
+              <label class="form-check">
+                <input type="checkbox" name="notifyEmail" <%= user.notifyEmail ? 'checked' : '' %>>
+                Email notifications
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="form-check">
+                <input type="checkbox" name="notifySms" <%= user.notifySms ? 'checked' : '' %>>
+                SMS notifications
+              </label>
+            </div>
+
+            <h2 style="font-size:18px;margin:24px 0 16px;">Change password</h2>
+            <div class="form-group">
+              <label for="current-password">Current password</label>
+              <input type="password" id="current-password" name="currentPassword" class="form-control" autocomplete="current-password">
+            </div>
+            <div class="form-group">
+              <label for="new-password">New password</label>
+              <input type="password" id="new-password" name="newPassword" class="form-control" autocomplete="new-password">
+            </div>
+
+            <button type="submit" class="btn btn-teal">Save changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

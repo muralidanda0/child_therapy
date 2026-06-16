@@ -1,0 +1,35 @@
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <div class="container navbar__inner">
+    <a href="/" class="navbar__logo" aria-label="Little Hearts Therapy Center home">
+      <span class="navbar__logo-icon" aria-hidden="true">🌿</span>
+      Little Hearts
+    </a>
+
+    <button class="navbar__toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+
+    <ul class="navbar__links" id="nav-links">
+      <li><a href="/" class="<%= currentPath === '/' ? 'active' : '' %>" aria-current="<%= currentPath === '/' ? 'page' : 'false' %>">Home</a></li>
+      <li><a href="/services" class="<%= currentPath === '/services' ? 'active' : '' %>">Services</a></li>
+      <li><a href="/about" class="<%= currentPath === '/about' ? 'active' : '' %>">About</a></li>
+      <li><a href="/appointments/new" class="<%= currentPath === '/appointments/new' ? 'active' : '' %>">Book Appointment</a></li>
+      <% if (user) { %>
+        <% if (user.role === 'parent') { %>
+          <li><a href="/parent/dashboard">My Portal</a></li>
+        <% } else if (user.role === 'therapist') { %>
+          <li><a href="/therapist/dashboard">My Portal</a></li>
+        <% } %>
+        <li><a href="/auth/logout">Logout</a></li>
+      <% } else { %>
+        <li><a href="/login" class="<%= currentPath === '/login' ? 'active' : '' %>">Login</a></li>
+      <% } %>
+    </ul>
+
+    <div class="navbar__actions">
+      <a href="/appointments/new" class="btn btn-primary btn-sm" aria-label="Book an appointment now">Book Now</a>
+    </div>
+  </div>
+</nav>

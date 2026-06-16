@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | Little Hearts Therapy</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <header class="page-header">
+    <div class="container">
+      <h1>Book an appointment</h1>
+      <p style="color:var(--color-text-muted);margin-top:8px;">Schedule a consultation in three easy steps.</p>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <%- include('../partials/flash') %>
+
+      <% if (success && appointment) { %>
+        <div class="booking-success" role="alert" aria-live="polite">
+          <div class="booking-success__icon" aria-hidden="true">✓</div>
+          <h2 style="margin-bottom:12px;">Booking confirmed!</h2>
+          <p style="color:var(--color-text-muted);margin-bottom:24px;">We've received your appointment request. You'll receive a confirmation email shortly.</p>
+
+          <div class="summary-card">
+            <dl>
+              <dt>Child</dt>
+              <dd><%= appointment.childName %></dd>
+              <dt>Concern</dt>
+              <dd><%= appointment.concern %></dd>
+              <dt>Therapist</dt>
+              <dd><%= therapist && therapist.userId ? therapist.userId.name : 'Assigned therapist' %></dd>
+              <dt>Date &amp; time</dt>
+              <dd><%= new Date(appointment.dateTime).toLocaleString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit' }) %></dd>
+              <dt>Status</dt>
+              <dd><span class="status status--pending">Pending confirmation</span></dd>
+            </dl>
+          </div>
+
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <a href="#" class="btn btn-outline-teal btn-sm" id="add-to-calendar" aria-label="Add appointment to calendar">Add to calendar</a>
+            <a href="/appointments/new" class="btn btn-primary btn-sm">Book another</a>
+            <a href="/parent/dashboard" class="btn btn-teal btn-sm">Go to dashboard</a>
+          </div>
+        </div>
+      <% } else { %>
+        <div class="wizard" id="booking-wizard">
+          <div class="wizard__steps" role="navigation" aria-label="Booking steps">
+            <div class="wizard__step-indicator">
+              <div class="wizard__step active" data-step="1">
+                <div class="wizard__step-circle">1</div>
+                <span class="wizard__step-label">Child info</span>
+              </div>
+              <div class="wizard__connector" aria-hidden="true"></div>
+              <div class="wizard__step" data-step="2">
+                <div class="wizard__step-circle">2</div>
+                <span class="wizard__step-label">Therapist &amp; time</span>
+              </div>
+              <div class="wizard__connector" aria-hidden="true"></div>
+              <div class="wizard__step" data-step="3">
+                <div class="wizard__step-circle">3</div>
+                <span class="wizard__step-label">Confirm</span>
+              </div>
+            </div>
+          </div>
+
+          <form action="/appointments/new" method="POST" id="booking-form" aria-label="Appointment booking form">
+            <!-- Step 1 -->
+            <div class="wizard__panel active" data-panel="1" role="tabpanel" aria-labelledby="step1-label">
+              <div class="wizard__card">
+                <h2 id="step1-label" style="font-size:22px;margin-bottom:24px;">Tell us about your child</h2>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="childName">Child's first name *</label>
+                    <input type="text" id="childName" name="childName" class="form-control" required aria-required="true">
+                  </div>
+                  <div class="form-group">
+                    <label for="childDOB">Date of birth *</label>
+                    <input type="date" id="childDOB" name="childDOB" class="form-control" required aria-required="true">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="concern">Primary concern *</label>
+                  <select id="concern" name="concern" class="form-control" required aria-required="true">
+                    <option value="">Select a concern</option>
+                    <option value="Speech delay">Speech delay</option>
+                    <option value="Behavioral challenges">Behavioral challenges</option>
+                    <option value="Sensory issues">Sensory issues</option>
+                    <option value="Social difficulties">Social difficulties</option>
+                    <option value="Anxiety">Anxiety</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="additionalNotes">Additional notes <span style="font-weight:400;color:var(--color-text-muted);">(optional)</span></label>
+                  <textarea id="additionalNotes" name="additionalNotes" class="form-control" placeholder="Anything else you'd like us to know..."></textarea>
+                </div>
+                <div class="wizard__actions">
+                  <span></span>
+                  <button type="button" class="btn btn-teal" data-next="2" aria-label="Go to step 2">Next →</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="wizard__panel" data-panel="2" role="tabpanel" aria-labelledby="step2-label">
+              <div class="wizard__card">
+                <h2 id="step2-label" style="font-size:22px;margin-bottom:16px;">Choose therapist &amp; time</h2>
+
+                <div class="filter-tabs" role="tablist" aria-label="Filter by therapy type">
+                  <button type="button" class="filter-tab active" data-filter="all" role="tab">All</button>
+                  <button type="button" class="filter-tab" data-filter="Speech Therapy" role="tab">Speech</button>
+                  <button type="button" class="filter-tab" data-filter="Behavioral Therapy" role="tab">Behavioral</button>
+                  <button type="button" class="filter-tab" data-filter="Occupational Therapy" role="tab">Occupational</button>
+                  <button type="button" class="filter-tab" data-filter="Play Therapy" role="tab">Play</button>
+                </div>
+
+                <div class="therapist-select-grid" id="therapist-grid">
+                  <% if (therapists && therapists.length) { %>
+                    <% therapists.forEach(function(t, i) { %>
+                      <% const tUser = t.userId; %>
+                      <% const specs = (t.specialties || []).join(','); %>
+                      <label class="therapist-select-card" data-specialties="<%= specs %>" for="therapist-<%= t._id %>">
+                        <input type="radio" name="therapistId" id="therapist-<%= t._id %>" value="<%= t._id %>" <%= i === 0 ? 'required' : '' %>>
+                        <div style="font-size:36px;margin-bottom:8px;" aria-hidden="true">👩‍⚕️</div>
+                        <strong><%= tUser ? tUser.name : 'Therapist' %></strong>
+                        <p style="font-size:13px;color:var(--color-text-muted);margin:4px 0;"><%= (t.specialties || []).slice(0,2).join(', ') %></p>
+                        <span class="availability-badge">Available this week</span>
+                      </label>
+                    <% }); %>
+                  <% } else { %>
+                    <p style="color:var(--color-text-muted);">No therapists available. Please <a href="/contact">contact us</a>.</p>
+                  <% } %>
+                </div>
+
+                <div id="time-slots-section" style="display:none;">
+                  <h3 style="font-size:18px;margin-bottom:8px;">Select a time slot</h3>
+                  <p style="font-size:14px;color:var(--color-text-muted);margin-bottom:12px;">Choose an available slot for your appointment.</p>
+                  <div class="time-grid" id="time-grid" role="group" aria-label="Available time slots"></div>
+                  <input type="hidden" name="dateTime" id="dateTime" required>
+                </div>
+
+                <div class="wizard__actions">
+                  <button type="button" class="btn btn-outline" data-prev="1" aria-label="Go back to step 1">← Back</button>
+                  <button type="button" class="btn btn-teal" data-next="3" id="step2-next" aria-label="Go to step 3">Next →</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="wizard__panel" data-panel="3" role="tabpanel" aria-labelledby="step3-label">
+              <div class="wizard__card">
+                <h2 id="step3-label" style="font-size:22px;margin-bottom:24px;">Confirm &amp; parent info</h2>
+
+                <div class="summary-card" id="booking-summary" aria-live="polite">
+                  <h3 style="font-size:16px;margin-bottom:12px;">Appointment summary</h3>
+                  <dl>
+                    <dt>Child</dt><dd id="summary-child">—</dd>
+                    <dt>Concern</dt><dd id="summary-concern">—</dd>
+                    <dt>Therapist</dt><dd id="summary-therapist">—</dd>
+                    <dt>Date &amp; time</dt><dd id="summary-datetime">—</dd>
+                  </dl>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="parentName">Parent/guardian name *</label>
+                    <input type="text" id="parentName" name="parentName" class="form-control" value="<%= user ? user.name : '' %>" required aria-required="true">
+                  </div>
+                  <div class="form-group">
+                    <label for="parentEmail">Email *</label>
+                    <input type="email" id="parentEmail" name="parentEmail" class="form-control" value="<%= user ? user.email : '' %>" required aria-required="true">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="parentPhone">Phone number *</label>
+                    <input type="tel" id="parentPhone" name="parentPhone" class="form-control" required aria-required="true">
+                  </div>
+                  <div class="form-group">
+                    <label for="insurance">Insurance provider <span style="font-weight:400;color:var(--color-text-muted);">(optional)</span></label>
+                    <input type="text" id="insurance" name="insurance" class="form-control" placeholder="e.g. Blue Cross">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-check">
+                    <input type="checkbox" name="termsAgree" id="termsAgree" required aria-required="true">
+                    I agree to the cancellation policy and understand this is a pending appointment request.
+                  </label>
+                </div>
+
+                <div class="wizard__actions">
+                  <button type="button" class="btn btn-outline" data-prev="2" aria-label="Go back to step 2">← Back</button>
+                  <button type="submit" class="btn btn-primary" aria-label="Confirm booking">Confirm booking</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      <% } %>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+  <script src="/js/main.js"></script>
+  <script src="/js/booking.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<% if (typeof therapist !== 'undefined' && therapist) { %>
+  <% const tUser = therapist.userId || therapist.user; %>
+  <div class="therapist-card">
+    <div class="therapist-card__photo" aria-hidden="true">👩‍⚕️</div>
+    <div class="therapist-card__body">
+      <div class="therapist-card__name"><%= tUser ? tUser.name : 'Therapist' %></div>
+      <div class="therapist-card__credentials"><%= therapist.title || 'Licensed Therapist' %><% if (therapist.licenseNo) { %> · <%= therapist.licenseNo %><% } %></div>
+      <% if (therapist.specialties && therapist.specialties.length) { %>
+        <div class="badges">
+          <% therapist.specialties.forEach(function(spec) { %>
+            <span class="badge"><%= spec %></span>
+          <% }); %>
+        </div>
+      <% } %>
+      <% if (therapist.bio) { %>
+        <p style="font-size:14px;color:var(--color-text-muted);margin-bottom:12px;"><%= therapist.bio.substring(0, 100) %><%= therapist.bio.length > 100 ? '...' : '' %></p>
+      <% } %>
+      <a href="/about#team" class="card__link" aria-label="View profile for <%= tUser ? tUser.name : 'therapist' %>">View profile →</a>
+    </div>
+  </div>
+<% } %>

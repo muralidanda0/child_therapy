@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | Little Hearts Therapy</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <header class="page-header">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">Services</span>
+      </nav>
+      <h1>Our therapy services</h1>
+      <p style="max-width:640px;color:var(--color-text-muted);margin-top:12px;">
+        We offer a comprehensive range of pediatric therapy services designed to support your child's development at every stage.
+        Each program is personalized, evidence-based, and delivered in a warm, child-friendly environment.
+      </p>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+
+      <div class="service-detail" id="speech">
+        <div class="service-detail__icon card__icon--teal" aria-hidden="true">💬</div>
+        <div>
+          <h2>Speech &amp; Language Therapy</h2>
+          <p class="service-detail__who"><strong>Who it helps:</strong> Children ages 2–12 with speech delays, stuttering, articulation disorders, language comprehension difficulties, and social communication challenges.</p>
+          <p><strong>What to expect:</strong></p>
+          <ul>
+            <li>Interactive play-based language activities</li>
+            <li>Articulation and phonological exercises</li>
+            <li>Parent coaching for home practice</li>
+            <li>Progress tracking with regular assessments</li>
+          </ul>
+          <span class="service-detail__duration">30–60 min sessions</span><br>
+          <a href="/appointments/new" class="btn btn-primary btn-sm">Book a session</a>
+        </div>
+      </div>
+
+      <div class="service-detail" id="behavioral">
+        <div class="service-detail__icon card__icon--coral" aria-hidden="true">❤️</div>
+        <div>
+          <h2>Behavioral Therapy (ABA-informed)</h2>
+          <p class="service-detail__who"><strong>Who it helps:</strong> Children with autism spectrum disorder, ADHD, oppositional behaviors, tantrums, and difficulty following routines or instructions.</p>
+          <p><strong>What to expect:</strong></p>
+          <ul>
+            <li>Functional behavior assessment</li>
+            <li>Positive reinforcement strategies</li>
+            <li>Social skills and emotional regulation training</li>
+            <li>Parent training and behavior plans for home</li>
+          </ul>
+          <span class="service-detail__duration">45–60 min sessions</span><br>
+          <a href="/appointments/new" class="btn btn-primary btn-sm">Book a session</a>
+        </div>
+      </div>
+
+      <div class="service-detail" id="occupational">
+        <div class="service-detail__icon card__icon--mint" aria-hidden="true">✋</div>
+        <div>
+          <h2>Occupational Therapy</h2>
+          <p class="service-detail__who"><strong>Who it helps:</strong> Children with fine motor delays, sensory processing differences, handwriting difficulties, and challenges with daily living skills.</p>
+          <p><strong>What to expect:</strong></p>
+          <ul>
+            <li>Sensory integration activities</li>
+            <li>Fine motor and handwriting practice</li>
+            <li>Self-care skill development</li>
+            <li>Adaptive strategies for school and home</li>
+          </ul>
+          <span class="service-detail__duration">30–60 min sessions</span><br>
+          <a href="/appointments/new" class="btn btn-primary btn-sm">Book a session</a>
+        </div>
+      </div>
+
+      <div class="service-detail" id="play">
+        <div class="service-detail__icon card__icon--yellow" aria-hidden="true">🧩</div>
+        <div>
+          <h2>Play Therapy</h2>
+          <p class="service-detail__who"><strong>Who it helps:</strong> Children ages 3–12 experiencing anxiety, trauma, grief, family transitions, or difficulty expressing emotions verbally.</p>
+          <p><strong>What to expect:</strong></p>
+          <ul>
+            <li>Child-directed play in a safe therapeutic space</li>
+            <li>Emotional expression through creative play</li>
+            <li>Trauma-informed, developmentally appropriate techniques</li>
+            <li>Regular parent check-ins on progress</li>
+          </ul>
+          <span class="service-detail__duration">45–50 min sessions</span><br>
+          <a href="/appointments/new" class="btn btn-primary btn-sm">Book a session</a>
+        </div>
+      </div>
+
+      <div class="service-detail" id="social">
+        <div class="service-detail__icon card__icon--teal" aria-hidden="true">👥</div>
+        <div>
+          <h2>Social Skills Groups</h2>
+          <p class="service-detail__who"><strong>Who it helps:</strong> Children ages 5–14 who struggle with making friends, reading social cues, turn-taking, or group participation.</p>
+          <p><strong>What to expect:</strong></p>
+          <ul>
+            <li>Small group sessions (3–5 children)</li>
+            <li>Role-play and cooperative games</li>
+            <li>Conversation and friendship skills practice</li>
+            <li>Peer feedback in a supportive setting</li>
+          </ul>
+          <span class="service-detail__duration">60 min group sessions</span><br>
+          <a href="/appointments/new" class="btn btn-primary btn-sm">Book a session</a>
+        </div>
+      </div>
+
+      <div class="service-detail" id="family">
+        <div class="service-detail__icon card__icon--coral" aria-hidden="true">🏠</div>
+        <div>
+          <h2>Family Counseling</h2>
+          <p class="service-detail__who"><strong>Who it helps:</strong> Families navigating parenting challenges, sibling dynamics, divorce, grief, or supporting a child with special needs.</p>
+          <p><strong>What to expect:</strong></p>
+          <ul>
+            <li>Family systems assessment</li>
+            <li>Communication and conflict resolution skills</li>
+            <li>Parent coaching and co-parenting support</li>
+            <li>Collaborative goal setting for the whole family</li>
+          </ul>
+          <span class="service-detail__duration">50–60 min sessions</span><br>
+          <a href="/appointments/new" class="btn btn-primary btn-sm">Book a session</a>
+        </div>
+      </div>
+
+      <!-- Therapist Showcase -->
+      <div class="section__header" style="margin-top:64px;">
+        <h2>Meet our therapists</h2>
+        <p>Experienced, licensed professionals dedicated to your child's growth.</p>
+      </div>
+      <div class="grid-3">
+        <% if (therapists && therapists.length) { %>
+          <% therapists.forEach(function(therapist) { %>
+            <%- include('../partials/therapistCard', { therapist: therapist }) %>
+          <% }); %>
+        <% } else { %>
+          <p style="grid-column:1/-1;text-align:center;color:var(--color-text-muted);">Our therapist profiles are being updated. Please check back soon or <a href="/contact">contact us</a>.</p>
+        <% } %>
+      </div>
+
+      <!-- FAQ -->
+      <div class="section__header" style="margin-top:64px;">
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="faq">
+        <div class="faq-item">
+          <input type="checkbox" id="faq1" aria-hidden="true">
+          <label for="faq1">How do I know which therapy my child needs?</label>
+          <div class="faq-answer">During your free consultation, our clinical team will assess your child's needs and recommend the most appropriate services. Many children benefit from a combination of therapies, and we'll create a personalized plan together.</div>
+        </div>
+        <div class="faq-item">
+          <input type="checkbox" id="faq2" aria-hidden="true">
+          <label for="faq2">How long does a typical therapy program last?</label>
+          <div class="faq-answer">Program length varies based on your child's goals and progress. Some children see significant improvement in 3–6 months, while others benefit from longer-term support. We review progress every 8–12 weeks and adjust as needed.</div>
+        </div>
+        <div class="faq-item">
+          <input type="checkbox" id="faq3" aria-hidden="true">
+          <label for="faq3">Is therapy covered by insurance?</label>
+          <div class="faq-answer">We accept most major insurance plans including Blue Cross, Aetna, and UnitedHealthcare. Our billing team will verify your coverage before your first session and help you understand any out-of-pocket costs.</div>
+        </div>
+        <div class="faq-item">
+          <input type="checkbox" id="faq4" aria-hidden="true">
+          <label for="faq4">What should I bring to the first appointment?</label>
+          <div class="faq-answer">Please bring your insurance card, any relevant medical or school records, a list of current medications, and any previous evaluation reports. Most importantly, bring your questions — we're here to listen.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

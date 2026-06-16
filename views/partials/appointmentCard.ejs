@@ -1,0 +1,17 @@
+<% if (typeof appointment !== 'undefined' && appointment) { %>
+  <div class="card" style="margin-bottom:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h3 style="font-size:18px;margin-bottom:4px;"><%= appointment.childName %></h3>
+        <p style="font-size:13px;color:var(--color-text-muted);">
+          <%= new Date(appointment.dateTime).toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' }) %>
+          at <%= new Date(appointment.dateTime).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) %>
+        </p>
+      </div>
+      <span class="status status--<%= appointment.status %>"><%= appointment.status %></span>
+    </div>
+    <p style="font-size:14px;color:var(--color-text-muted);margin-top:8px;">
+      Service: <%= appointment.type || appointment.concern %>
+    </p>
+  </div>
+<% } %>

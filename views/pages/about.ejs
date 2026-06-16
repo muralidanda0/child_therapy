@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | Little Hearts Therapy</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <section class="hero" style="padding:64px 0;" aria-labelledby="about-hero">
+    <div class="container">
+      <div class="hero__grid">
+        <div class="hero__content">
+          <h1 id="about-hero">We believe every child has the power to grow.</h1>
+          <p>Founded in 2015, Little Hearts Therapy Center was born from a simple belief: every child deserves compassionate, expert care in an environment where they feel safe to explore, learn, and heal. We partner with families because lasting change happens together.</p>
+        </div>
+        <div class="hero__image" role="img" aria-label="Warm therapy center environment">🏡</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white" aria-labelledby="values-heading">
+    <div class="container">
+      <div class="section__header">
+        <h2 id="values-heading">Our values</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card" style="text-align:center;">
+          <div class="card__icon card__icon--coral" style="margin:0 auto 20px;" aria-hidden="true">💛</div>
+          <h3>Compassion first</h3>
+          <p>We meet every child and family where they are — with patience, empathy, and unconditional support.</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card__icon card__icon--teal" style="margin:0 auto 20px;" aria-hidden="true">📊</div>
+          <h3>Evidence-based practice</h3>
+          <p>Our methods are grounded in the latest research, continuously refined through ongoing training.</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card__icon card__icon--mint" style="margin:0 auto 20px;" aria-hidden="true">👨‍👩‍👧</div>
+          <h3>Family-centered care</h3>
+          <p>Parents are partners, not spectators. We equip families with tools to support growth at home.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="team" aria-labelledby="team-heading">
+    <div class="container">
+      <div class="section__header">
+        <h2 id="team-heading">Meet the team</h2>
+        <p>Licensed, experienced therapists who love what they do.</p>
+      </div>
+      <div class="grid-3">
+        <% if (therapists && therapists.length) { %>
+          <% therapists.forEach(function(therapist) { %>
+            <%- include('../partials/therapistCard', { therapist: therapist }) %>
+          <% }); %>
+        <% } else { %>
+          <p style="grid-column:1/-1;text-align:center;color:var(--color-text-muted);">Team profiles coming soon.</p>
+        <% } %>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white" aria-labelledby="story-heading">
+    <div class="container">
+      <div class="section__header">
+        <h2 id="story-heading">Our story</h2>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-item__year">2015</div>
+          <p>Little Hearts Therapy Center was founded by Dr. Emily Chen with a mission to make quality pediatric therapy accessible to all families.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-item__year">2017</div>
+          <p>Opened our second location to serve the growing community, doubling our capacity to help local families.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-item__year">2020</div>
+          <p>Launched teletherapy services, ensuring continuity of care during challenging times and reaching rural families.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-item__year">2023</div>
+          <p>Celebrated serving over 1,000 children and their families, with a 94% parent satisfaction rate.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="accreditations-heading">
+    <div class="container">
+      <div class="section__header">
+        <h2 id="accreditations-heading">Accreditations &amp; certifications</h2>
+      </div>
+      <div class="accreditations">
+        <div class="accreditation-badge">ASHA Certified</div>
+        <div class="accreditation-badge">BACB Approved</div>
+        <div class="accreditation-badge">AOTA Member</div>
+        <div class="accreditation-badge">APA Accredited</div>
+        <div class="accreditation-badge">HIPAA Compliant</div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

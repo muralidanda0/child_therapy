@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Little Hearts Therapy Center — compassionate therapy for children ages 2–17.">
+  <title><%= title %> | Little Hearts Therapy</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <main id="main-content">
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <div class="hero__grid">
+          <div class="hero__content">
+            <h1 id="hero-heading">Every child deserves to thrive.</h1>
+            <p>Compassionate therapy for children ages 2–17. Speech, behavioral, occupational, and play therapy — all under one roof.</p>
+            <div class="hero__actions">
+              <a href="/appointments/new" class="btn btn-primary" aria-label="Book a free consultation">Book a free consultation</a>
+              <a href="/about#team" class="btn btn-outline-teal" aria-label="Meet our therapists">Meet our therapists</a>
+            </div>
+          </div>
+          <div class="hero__image" role="img" aria-label="Child in a calm therapy setting">
+            🧒
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Preview -->
+    <section class="section section--white" aria-labelledby="services-heading">
+      <div class="container">
+        <div class="section__header">
+          <h2 id="services-heading">How we help</h2>
+          <p>Specialized therapy services tailored to your child's unique needs and strengths.</p>
+        </div>
+        <div class="grid-4">
+          <div class="card">
+            <div class="card__icon card__icon--teal" aria-hidden="true">💬</div>
+            <h3>Speech Therapy</h3>
+            <p>Building communication skills through engaging, play-based sessions.</p>
+            <a href="/services#speech" class="card__link">Learn more →</a>
+          </div>
+          <div class="card">
+            <div class="card__icon card__icon--coral" aria-hidden="true">❤️</div>
+            <h3>Behavioral Therapy</h3>
+            <p>Positive behavior support rooted in evidence-based ABA principles.</p>
+            <a href="/services#behavioral" class="card__link">Learn more →</a>
+          </div>
+          <div class="card">
+            <div class="card__icon card__icon--mint" aria-hidden="true">✋</div>
+            <h3>Occupational Therapy</h3>
+            <p>Developing fine motor skills, sensory processing, and daily independence.</p>
+            <a href="/services#occupational" class="card__link">Learn more →</a>
+          </div>
+          <div class="card">
+            <div class="card__icon card__icon--yellow" aria-hidden="true">🧩</div>
+            <h3>Play Therapy</h3>
+            <p>Healing through play — where children express, process, and grow.</p>
+            <a href="/services#play" class="card__link">Learn more →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section" aria-labelledby="how-heading">
+      <div class="container">
+        <div class="section__header">
+          <h2 id="how-heading">How it works</h2>
+          <p>Getting started is simple. We're here to guide you every step of the way.</p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <div class="step__number" aria-hidden="true">1</div>
+            <div class="step__icon" aria-hidden="true">📅</div>
+            <h3>Book a consultation</h3>
+            <p>Schedule a free 30-minute consultation to discuss your child's needs and goals.</p>
+          </div>
+          <div class="step">
+            <div class="step__number" aria-hidden="true">2</div>
+            <div class="step__icon" aria-hidden="true">🤝</div>
+            <h3>Meet your therapist</h3>
+            <p>We match your child with a specialist who fits their personality and needs.</p>
+          </div>
+          <div class="step">
+            <div class="step__number" aria-hidden="true">3</div>
+            <div class="step__icon" aria-hidden="true">🌱</div>
+            <h3>Watch your child grow</h3>
+            <p>Track progress together through regular sessions and parent updates.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section section--white" aria-labelledby="testimonials-heading">
+      <div class="container">
+        <div class="section__header">
+          <h2 id="testimonials-heading">What parents say</h2>
+          <p>Real stories from families who found hope and progress at Little Hearts.</p>
+        </div>
+        <div class="testimonials">
+          <div class="testimonial">
+            <div class="testimonial__stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <p class="testimonial__quote">"Within three months, our son went from barely speaking to full sentences. The therapists here are truly magical with children."</p>
+            <div class="testimonial__author">
+              <div class="testimonial__avatar" aria-hidden="true">SM</div>
+              <div>
+                <div class="testimonial__name">Sarah M.</div>
+                <div class="testimonial__role">Parent of a 4-year-old</div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial">
+            <div class="testimonial__stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <p class="testimonial__quote">"The behavioral therapy program transformed our daily life. Our daughter's meltdowns decreased dramatically, and she learned coping skills we use at home."</p>
+            <div class="testimonial__author">
+              <div class="testimonial__avatar" aria-hidden="true">JR</div>
+              <div>
+                <div class="testimonial__name">James R.</div>
+                <div class="testimonial__role">Parent of a 7-year-old</div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial">
+            <div class="testimonial__stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <p class="testimonial__quote">"From the first visit, we felt welcomed and understood. The team listens to parents and truly partners with families."</p>
+            <div class="testimonial__author">
+              <div class="testimonial__avatar" aria-hidden="true">LP</div>
+              <div>
+                <div class="testimonial__name">Lisa P.</div>
+                <div class="testimonial__role">Parent of a 10-year-old</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>
